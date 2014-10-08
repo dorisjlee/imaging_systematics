@@ -10,37 +10,38 @@
 ;(129.17618844774728, 48.946499245149603, array([  6.97442301e-05,   4.30699396e+00,   3.84225416e+00,
 ;         2.94124365e+00,   4.47876596e+00], dtype=float32))
 
-;function N2d():
 ; make sure to index xpix,ypix value or else the array operation will not work
 ;n2diso, xgrid,ygrid,xpix[0],ypix[0],0.1,1
- pro N2diso, xgrid,ygrid,mx,my,sig2inv,imGauss
+ function N2diso, xgrid,ygrid,mx,my,sig2inv,imGauss
         ; Should be working now
+	; n2diso, make_array(5,1),make_array(1,5), 5,5,0.1,1
         ; n2diso, xgrid,ygrid,xpix[0],ypix[0],0.1,1 
 	exparg = sig2inv*(xgrid-mx)^2+sig2inv*(ygrid-my)^2
-        result= (sig2inv/(2*!pi))*exp(-0.5*exparg)     
- stop
+        result= (sig2inv/(2*!pi))*exp(-0.5*exparg)    
+	return, result 
+	stop
  end
 
-pro  deVauc2d,xgrid,ygrid,Ie,re
-; 	mdev10={0.00139:0.00087, 0.00941:0.00296,0.04441:0.00792,0.16162:0.01902,0.48121:0.04289,1.20357:0.09351,2.54182:0.20168,4.46441:0.44126,6.22820:1.01833,6.15393:2.74555}
-    a = [0.00139,0.00941,0.04441,0.16162,0.48121,1.20357,2.54182,4.46441,6.22820,6.15393] 
-    v = [0.00087,0.00296,0.00792,0.01902,0.04289,0.09351,0.20168,0.44126,1.01833,2.74555]
-    ;xi = np.fabs(r/re)
-    
-    ;xi = abs(r/re)
-    result = make_array(n_elements(xgrid)*n_elements(ygrid))
-    ;result = np.zeros(len(r))
-
+;pro deVauc2d,xgrid,ygrid,Ie,re
+function deVauc2d, rgrid,Ie,re
+    ;a = [0.00139,0.00941,0.04441,0.16162,0.48121,1.20357,2.54182,4.46441,6.22820,6.15393] 
+    ;v = [0.00087,0.00296,0.00792,0.01902,0.04289,0.09351,0.20168,0.44126,1.01833,2.74555]
+    ; Values correct verified with sum a_m =21.2900
+    mdev10 = [[0.00139,0.00087],[0.00941,0.00296],[0.04441,0.00792],[0.16162,0.01902],[0.48121,0.04289],[1.20357,0.09351],[2.54182,0.20168],[4.46441,0.44126],[6.22820,1.01833],[6.15393,2.74555]] 
+    xi = abs(rgrid/re)
+    shape = size(rgrid,/dimensions)
+    result = make_array(shape[0],shape[1])
     ; use /null so that array unmodified if condition not met
-    xx = array[where(result GT 8.,/NULL)]
-    ; Not done yet.
-    ;xx = np.where(xi > 8.)[0]
-    ;for kk, vv in mluv10.iteritems():
-    ;  result += kk*N2diso(xi,vv)
-    ;if len(xx) > 0:
-    ;  result[xx] = 0.
-    ;result = Ie*result
-    ;return result
+    xx = where(result GT 8.)
+    ; Maybe can reuse these from stackimage procedure ? 
+    xgrid = intarr(2*shape[0]+1,2*shape[1]+1)
+    ygrid = intarr(2*shape[0]+1,2*shape[1]+1)
+    for i = 0,9 do $
+	result = result + mdev10[0,i]*N2diso(xi,mdev10[1,i])
+    if n_elements(xx) GT 0 THEN $
+      result[xx] = 0.
+    result = Ie*result
+    return, result
  stop
 end
  
