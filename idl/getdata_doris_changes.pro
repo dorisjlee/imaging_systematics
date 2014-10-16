@@ -11,15 +11,23 @@
 ;         2.94124365e+00,   4.47876596e+00], dtype=float32))
 
 ; make sure to index xpix,ypix value or else the array operation will not work
- function N2diso, xgrid,ygrid,mx,my,sig2inv,imGauss
+; function N2diso, xgrid,ygrid,mx,my,sig2inv,imGauss
+pro testN2diso
+	print, N2diso, findgen(100),10
+        ;print,10
+end
+function  N2diso, rgrid, sig2inv,imGauss
+	; Not too sure what imGauss is for ??
         ; Should be working now
 	; n2diso, make_array(5,1),make_array(1,5), 5,5,0.1,1
         ; Can't use this since we don't run getdata anymore 
 	;  n2diso, xgrid,ygrid,xpix[0],ypix[0],0.1,1 
-	exparg = sig2inv*(xgrid-mx)^2+sig2inv*(ygrid-my)^2
-        result= (sig2inv/(2*!pi))*exp(-0.5*exparg)    
+	
+	;exparg = sig2inv*(xgrid-mx)^2+sig2inv*(ygrid-my)^2
+        exparg = sig2inv*rgrid^2
+	result= (sig2inv/(2*!pi))*exp(-0.5*exparg)    
 	return, result 
-	;stop
+;	stop
  end
 
 ; Modular testing works, but can't detect N2diso
@@ -44,7 +52,7 @@ function deVauc2d, rgrid,Ie,re
       result[xx] = 0.
     result = Ie*result
     return, result
- stop
+ ;;stop
 end
  
 pro getdata ;; , ra, dec, r_dev
