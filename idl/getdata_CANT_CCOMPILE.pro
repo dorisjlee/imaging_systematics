@@ -1,3 +1,4 @@
+
 ; Don't forget about Galactic extinction!
 ; Call this function for 1 object at a time.
 ; Return Poisson errors for the object also?
@@ -8,17 +9,32 @@
 ;         2.94124365e+00,   4.47876596e+00], dtype=float32))
 
 ;function N2d():
- pro N2diso, xgrid,ygrid,mx,my,sig2inv,imGauss
-        ;exparg = (xgrid - xpix)*sig2inv*(xgrid - xpix) +$
-        ;   (ygrid - xpix)*sig2inv*(ygrid - ypix)
-        ;return, (0.5/pi)*siginv*exp(exparg)   
-	exparg = (xgrid - mx)*sig2inv*(xgrid - mx) +$
-        (ygrid - my)*sig2inv*(ygrid - my)
-	;Since parameter pass as sig2, normalization is just sig so sqrt
-        result= (0.5/!pi)*sqrt(sig2inv)*exp(exparg)     
- stop
- end
+ function N2diso;,xgrid,ygrid,mx,my,sig2inv,imGauss
+ ; Can not write as procedure since procedure can only return (to exit)but not return for value
 
+;function N2diso,xgrid,ygrid,mx,my,sig2inv
+  ;; Doris
+  	;exparg = (xgrid - xpix)*sig2inv*(xgrid - xpix) +$ 
+ ;          (ygrid - xpix)*sig2inv*(ygrid - ypix)
+	;return, (0.5/pi)*siginv*exp(exparg)
+ 	return,1
+  end
+ 
+;function deVauc2d,xgrid,ygrid,Ie,re
+pro  deVauc2d,xgrid,ygrid,Ie,re
+  ;; Doris
+  ;mdev10={'test':1,'test2':2}
+  ;mdev10={0.00139:0.00087, 0.00941:0.00296,0.04441:0.00792,0.16162:0.01902,0.48121:0.04289,1.20357:0.09351,2.54182:0.20168,4.46441:0.44126,6.22820:1.01833,6.15393:2.74555} 
+  ;print,mdev10 
+
+  ;xx = np.where(xi > 8.)[0]
+  ;  for kk, vv in mluv10.iteritems():
+  ;    mmodel += kk*N2diso(xi,vv)
+  ;  if len(xx) > 0:
+  ;    result[xx] = 0.
+  ;  mmodel = Ie*mmodel
+   ; return, mmodel
+  end
 
 
 pro getdata ;; , ra, dec, r_dev
@@ -50,7 +66,7 @@ pro getdata ;; , ra, dec, r_dev
 
    ; Loop over each of the SDSS bands
    ;for ifilter=1,3 do begin
-   for ifilter=1,3 do begin
+   for ifilter=3 do begin
       r_dev = dd[indx].r_dev[ifilter]
       ; Read in this image
       infile = sdss_name('idR', dd[indx].run, dd[indx].camcol, dd[indx].field, $
@@ -69,10 +85,6 @@ pro getdata ;; , ra, dec, r_dev
 
   ;;for each image, we want to grab relevant subset of pixels
   npix = r_dev * 8.
-  
-  xpix = xpix
-  ypix = ypix 
-
   xmin = floor(xpix - r_dev*8.) - 1
   xmax = floor(xpix + r_dev*8.) + 1
 
@@ -87,6 +99,8 @@ pro getdata ;; , ra, dec, r_dev
 
   xgrid = intarr(nx,ny)
   ygrid = intarr(nx,ny)
+
+  mmodel = make_array(nx,ny)
 
   xgrid1d = indgen(nx) + xmin
   ygrid1d = indgen(ny) + ymin
