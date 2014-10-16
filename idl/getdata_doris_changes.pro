@@ -12,10 +12,10 @@
 
 ; make sure to index xpix,ypix value or else the array operation will not work
 ; function N2diso, xgrid,ygrid,mx,my,sig2inv,imGauss
-pro testN2diso
-	print, N2diso, findgen(100),10
+;pro testN2diso
+;	print, N2diso, findgen(100),10
         ;print,10
-end
+;end
 function  N2diso, rgrid, sig2inv,imGauss
 	; Not too sure what imGauss is for ??
         ; Should be working now
@@ -42,7 +42,8 @@ function deVauc2d, rgrid,Ie,re
     shape = size(rgrid,/dimensions)
     result = make_array(shape[0],shape[1])
     ; use /null so that array unmodified if condition not met
-    xx = where(result GT 8.)
+    xx = where(result GT 8.,/null)
+    ;stop
     ; Maybe can reuse these from stackimage procedure ? 
     xgrid = intarr(2*shape[0]+1,2*shape[1]+1)
     ygrid = intarr(2*shape[0]+1,2*shape[1]+1)
@@ -52,7 +53,7 @@ function deVauc2d, rgrid,Ie,re
       result[xx] = 0.
     result = Ie*result
     return, result
- ;;stop
+ ;stop
 end
  
 pro getdata ;; , ra, dec, r_dev
