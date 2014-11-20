@@ -22,20 +22,6 @@
 ;(129.17618844774728, 48.946499245149603, array([  6.97442301e-05,   4.30699396e+00,   3.84225416e+00,
 ;         2.94124365e+00,   4.47876596e+00], dtype=float32))
 
-<<<<<<< HEAD
-;function N2d():
- pro N2diso, xgrid,ygrid,mx,my,sig2inv,imGauss
-        ;exparg = (xgrid - xpix)*sig2inv*(xgrid - xpix) +$
-        ;   (ygrid - xpix)*sig2inv*(ygrid - ypix)
-        ;return, (0.5/pi)*siginv*exp(exparg)   
-	exparg = (xgrid - mx)*sig2inv*(xgrid - mx) +$
-        (ygrid - my)*sig2inv*(ygrid - my)
-	;Since parameter pass as sig2, normalization is just sig so sqrt
-        result= (0.5/!pi)*sqrt(sig2inv)*exp(exparg)     
- stop
- end
-
-=======
 
 function WHERE_XYZ, Array_expression, Count, XIND=xind, YIND=yind,ZIND=zind
   ; works for 1, 2 or 3 dimensional arrays
@@ -141,7 +127,6 @@ pro fitimage,imdata,immodel,invvar,A,invvarA,bgd,invvarbgd
   A = (s*sxy - sx*sy)/delta
   invvarA = delta/s
   end
->>>>>>> 575ec90dc0f6539113920df0854076d9a4f6c5f2
 
 ;pro stackimage, im, iminvvar  ;; , ra, dec, r_dev
 pro stackimage
@@ -171,11 +156,6 @@ pro stackimage
   ;; see BR_2dmodel.ipynb; 99% of galaxies are < this R_DEV value.
   r_devmax = [74.9,74.9,14.75,11.97,15.31]
 
-<<<<<<< HEAD
-   ; Loop over each of the SDSS bands
-   ;for ifilter=1,3 do begin
-   for ifilter=1,3 do begin
-=======
   ;for ifilter = 1,3 do begin 
   for ifilter = 3,3 do begin 
   
@@ -204,7 +184,6 @@ pro stackimage
     for indx=0,nstack-1 do begin
       ra = dd[indx].ra
       dec = dd[indx].dec
->>>>>>> 575ec90dc0f6539113920df0854076d9a4f6c5f2
       r_dev = dd[indx].r_dev[ifilter]
       if r_dev GT r_devmax[ifilter] then begin
         continue ;; skip weirdos.
@@ -220,20 +199,9 @@ pro stackimage
       xpix = xpix[0]
       ypix = ypix[0]
 
-<<<<<<< HEAD
-  ;;for each image, we want to grab relevant subset of pixels
-  npix = r_dev * 8.
-  
-  xpix = xpix
-  ypix = ypix 
-
-  xmin = floor(xpix - r_dev*8.) - 1
-  xmax = floor(xpix + r_dev*8.) + 1
-=======
       ;; which pixel is center closest to (pixcen) and what's the offset from that center (cenoffset).
       pixcen = [floor(xpix+0.5), floor(ypix+0.5)]
       cenoffset = [xpix - floor(xpix+0.5), ypix - floor(ypix+0.5)]
->>>>>>> 575ec90dc0f6539113920df0854076d9a4f6c5f2
 
       print,'pixcen',pixcen
       print,'cenoffset',cenoffset
